@@ -1,41 +1,25 @@
 
-import {Flow, isPrimitive, hasInstance, FlowHandlers, Cond} from "./Flow";
+import {Flow, isPrimitive, hasInstance, FlowHandlers, Cond} from "./flow.ts";
 import {
     acceptWebSocket,
     isWebSocketCloseEvent,
     isWebSocketPingEvent,
     isWebSocketPongEvent,
     WebSocket,
-    WebSocketEvent,
     ServerRequest
-} from "../deps.ts";
-
-export type WSEventList = {
-    [k: string]: FlowHandlers,
-    onMessage: FlowHandlers,
-    onConnect: FlowHandlers,
-    onPing: FlowHandlers,
-    onPong: FlowHandlers,
-    onDisconnect: FlowHandlers,
-    onBinary: FlowHandlers
-}
-export class BetterWS {
-    private _socket: WebSocket;
-    private _flow: Flow;
-    readonly request: ServerRequest;
-    readonly events: WSEventList;
-
+} from "./deps.ts";
+import * as Base from './type.ts'
+import * as Layer from './layer.ts'
+import {baseEvent} from './event.ts';
+export class BetterWS{
+    private flow: Flow;
+    readonly events: Base.WSEventList;
+    readonly connection: Layer.Namespace = new Layer.Namespace();
+    readonly allConnection: Layer.SockList = new Layer.SockList();
     constructor() {
-        this.events = {
-            onMessage: [],
-            onPing: [],
-            onPong: [],
-            onConnect: [],
-            onDisconnect: [],
-            onBinary: [],
-        }
+        this.events = baseEvent.clone();
         // now we choose gain event for string or Uint8Array
-        this._flow = new Flow(
+        this.flow = new Flow(
             [
                 [isPrimitive('string'), this.events.onMessage],
                 [isWebSocketPingEvent, this.events.onPing],
@@ -53,29 +37,36 @@ export class BetterWS {
             bufReader: r,
             bufWriter: w,
         });
-        await this._flow.eval(this.events.onConnect);
+        
+        this.connection[Layer.defaultSockKey][Layer.defaultSockKey].push(socket);
+        this.allConnection.push(socket);
+        
+        await this.flow.eval(this.events.onConnect);
         for await (const ev of socket.receive()) {
             try {
-                this._flow.exec(ev);
+                await this.flow.exec(ev);
             } catch (e) {
                 await socket.close(1000).catch(console.error);
             }
         }
-        return socket;
-    }
+        return this;
+    }   
     hasEvent() {
 
     }
-    addEvent(eventName: string, ...handlers: FlowHandlers) {
-        const {events, _flow} = this;
+    _addEvent(eventName: string, ...handlers: Base.SockHandleArray) {
+        const {events} = this;
         if (!(eventName in events)) {
             throw new Error(`not exist event [eventName: ${eventName}]`);
         }
         events[eventName].push(...handlers);
     }
-    addCustomEvent(cond: Cond, eventName: string, ...handlers: FlowHandlers) {
-        const currentEvent: FlowHandlers = this.events[eventName] = [];
-        this._flow.add(cond, ...currentEvent)
-        this.addEvent(eventName, ...handlers);
+    _addCustomEvent(cond: Cond, eventName: string, ...handlers: Base.SockHandleArray) {
+        const currentEvent: Base.SockHandleArray = this.events[eventName] = [];
+        this.flow.add(cond, ...currentEvent);
+        this._addEvent(eventName, ...handlers);
+    }
+    attachEvent() {
+
     }
 }

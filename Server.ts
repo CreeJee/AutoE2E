@@ -11,16 +11,16 @@ async function run() {
     try {
         for await (const {name} of await readDir(moduleDir)) {
             const route = (await import(`${moduleDir}/${name}`)).default;
-            const prefix = basename(name, extname(name));
-            const router = new Router(prefix === 'index' ? {} : {prefix});
+            const prefix = `/${basename(name, extname(name))}`;
+            const router = new Router(prefix === '/index' ? {} : {prefix});
             if (typeof route !== 'function') { 
                 throw new Error('router dir module is must function');
             }
-            await route(router);
+            await route(router, app);
             app.use(router.routes());
             app.use(router.allowedMethods());
         }
-        console.log(`server listening on ${server.address}`);
+        console.log(`server start on ${server.address}`)
         await app.listen(server.address);
     } catch (err) {
         console.error(err);
