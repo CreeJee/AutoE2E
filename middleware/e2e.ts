@@ -2,7 +2,7 @@
 import {Context} from "https://deno.land/x/oak/context.ts";
 import { BetterWS } from '../lib/BetterWS/mod.ts';
 import { Router, Application } from "https://deno.land/x/oak/mod.ts";
-const ws = new BetterWS();
+const ws = new BetterWS({});
 export const handler = (router: Router, app: Application) => {
     app.use(
         async (ctx: Context, next) => {

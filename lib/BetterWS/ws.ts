@@ -7,25 +7,31 @@ import {
     isWebSocketPongEvent,
     WebSocket,
     ServerRequest
-} from "./deps.ts";
+} from './deps.ts';
 import * as Base from './type.ts'
 import * as Layer from './layer.ts'
 import {baseEvent} from './event.ts';
-export class BetterWS{
+import { Sock, SockMessage } from "./socket.ts";
+
+const _messageWrapper = (fn: Function) => (sock: Sock, msg: SockMessage): boolean => {
+    return fn(msg);
+}
+export class BetterWS {
     private flow: Flow;
     readonly events: Base.WSEventList;
-    readonly connection: Layer.Namespace = new Layer.Namespace();
-    readonly allConnection: Layer.SockList = new Layer.SockList();
-    constructor() {
-        this.events = baseEvent.clone();
+    readonly allConnection: Layer.Group = new Layer.Group();
+    constructor({
+        events = baseEvent.clone()
+    }) {
+        this.events = events;
         // now we choose gain event for string or Uint8Array
         this.flow = new Flow(
             [
-                [isPrimitive('string'), this.events.onMessage],
-                [isWebSocketPingEvent, this.events.onPing],
-                [isWebSocketPongEvent, this.events.onPong],
-                [isWebSocketCloseEvent, this.events.onDisconnect],
-                [hasInstance(Uint8Array), this.events.onBinary]
+                [_messageWrapper(isPrimitive('string')), this.events.onMessage],
+                [_messageWrapper(isWebSocketPingEvent), this.events.onPing],
+                [_messageWrapper(isWebSocketPongEvent), this.events.onPong],
+                [_messageWrapper(isWebSocketCloseEvent), this.events.onDisconnect],
+                [_messageWrapper(hasInstance(Uint8Array)), this.events.onBinary]
             ]
         );
     }
@@ -37,14 +43,13 @@ export class BetterWS{
             bufReader: r,
             bufWriter: w,
         });
+        const sock:Sock = new Sock(socket);
+        this.allConnection.join(sock);
         
-        this.connection[Layer.defaultSockKey][Layer.defaultSockKey].push(socket);
-        this.allConnection.push(socket);
-        
-        await this.flow.eval(this.events.onConnect);
+        await this.flow.eval(this.events.onConnect, sock, '',);
         for await (const ev of socket.receive()) {
             try {
-                await this.flow.exec(ev);
+                await this.flow.exec(socket, ev);
             } catch (e) {
                 await socket.close(1000).catch(console.error);
             }

@@ -1,54 +1,63 @@
-import * as deps from './deps.ts';
-import { WebSocketMessage, WebSocket } from "./deps.ts";
-export class SockList extends Array<WebSocket>{
-    constructor(...items){
-        super();
-        this.push(...items);
-    }
-};
-export const defaultSockKey = 'default';
-export abstract class Layer<T> extends Map<string,T>{
-    abstract async send(key:string, data: deps.WebSocketMessage): Promise<void>;
-    createOrGet(key, Construct: {new(): T}) {
-        if(!this.has(key)) {
-            this.set(key, new Construct());
-        }
-        return this.get(key);
-    }
-    constructor() {
-        super();
-        return new Proxy(this, {
-            get(target, k) {
-                if (k in target) {
-                    return Reflect.get(target, k).bind(target);
-                } else {
-                    return target.get(k.toString());
-                }
-            }
-        })
-    }
-}
-export class Room extends Layer<SockList>{
-    constructor(){
-        super();
-        this.createOrGet(defaultSockKey, SockList);
-    }
-    async send(key: string, data: deps.WebSocketMessage): Promise<void> {
-        for(const socket of this.createOrGet(key, SockList)) {
-            await socket.send(data);
-        }
+import * as deps from './deps.ts'
+import { WebSocketMessage, WebSocket } from './deps.ts'
+import { Sock, SockMessage } from './socket.ts'
+export const defaultSockKey = 'default'
+export class Group {
+    protected groups: Sock[] = new Array<Sock>();
+    constructor (...items) {
+      this.groups.push(...items)
     }
 
-}
-export class Namespace extends Layer<Room>{
-    constructor(){
-        super();
-        this.createOrGet(defaultSockKey, Room);
+    async sendAll (data: SockMessage): Promise<void> {
+      for await (const socket of this.groups) {
+        await socket.send(data)
+      }
     }
-    async send(key: string, data: deps.WebSocketMessage): Promise<void> {
-        const roomGroup = this.createOrGet(key, Room);
-        for (const roomName of roomGroup.keys()) {
-            await roomGroup.send(roomName, data);
+
+    async sendTo (socket: Sock, data: SockMessage): Promise<Sock> {
+      const groups = this.groups
+      let current: Sock = null
+      if (!groups.includes(socket)) {
+        throw new Error('socket is must joined')
+      }
+      current = groups[groups.indexOf(socket)]
+      await current.send(data)
+      return current
+    }
+
+    async join (socket: Sock): Promise<void> {
+      if (this.groups.includes(socket)) {
+        throw new Error('socket is alreay joined')
+      };
+      this.groups.push(socket)
+    }
+
+    async leave (socket: Sock): Promise<void> {
+      if (!this.groups.includes(socket)) {
+        throw new Error('socket is Must join room')
+      }
+    }
+};
+export abstract class Layer<T> extends Map<string, T> {
+  createOrGet (key, Construct: {new(): T}) {
+    if (!this.has(key)) {
+      this.set(key, new Construct())
+    }
+    return this.get(key)
+  }
+
+  constructor (ConstructT: {new(): T}) {
+    super()
+
+    this.createOrGet(defaultSockKey, ConstructT)
+    return new Proxy(this, {
+      get (target, k) {
+        if (k in target) {
+          return Reflect.get(target, k).bind(target)
+        } else {
+          return target.get(k.toString())
         }
-    }
+      }
+    })
+  }
 }
