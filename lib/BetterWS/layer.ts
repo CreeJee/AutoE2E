@@ -1,6 +1,7 @@
 import * as deps from './deps.ts'
 import { WebSocketMessage, WebSocket } from './deps.ts'
-import { Sock, SockMessage } from './socket.ts'
+import { Sock } from './socket.ts'
+import { SockMessage } from './type.ts';
 export const defaultSockKey = 'default'
 export class Group {
     protected groups: Sock[] = new Array<Sock>();

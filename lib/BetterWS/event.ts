@@ -1,5 +1,4 @@
 import * as Base from './type.ts';
-import EchoHandler from './handlers/test.ts';
 export class EventManager implements Base.WSEventList{
     onMessage: Base.SockHandleArray = [];
     onConnect: Base.SockHandleArray = [];
@@ -7,7 +6,7 @@ export class EventManager implements Base.WSEventList{
     onPong: Base.SockHandleArray = [];
     onDisconnect: Base.SockHandleArray = [];
     onBinary: Base.SockHandleArray = [];
-    register(eventInstance: Base.SockEvent) {
+    register(eventInstance: Base.ISockEvent) {
         for (const eventName of Object.getOwnPropertyNames(this)) {
             const currentProp = eventInstance[eventName];
             if(currentProp instanceof Function) {
@@ -27,5 +26,9 @@ export class EventManager implements Base.WSEventList{
     }
 }
 const _baseEvent = new EventManager();
-_baseEvent.register(new EchoHandler());
+export class SockBaseEvent implements Base.ISockEvent{
+    constructor() {
+        _baseEvent.register(this)
+    }
+}
 export const baseEvent = _baseEvent;

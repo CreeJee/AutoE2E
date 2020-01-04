@@ -11,9 +11,9 @@ import {
 import * as Base from './type.ts'
 import * as Layer from './layer.ts'
 import {baseEvent} from './event.ts';
-import { Sock, SockMessage } from "./socket.ts";
+import { Sock } from "./socket.ts";
 
-const _messageWrapper = (fn: Function) => (sock: Sock, msg: SockMessage): boolean => {
+const _messageWrapper = (fn: Function) => (sock: Sock, msg: Base.SockMessage): boolean => {
     return fn(msg);
 }
 export class BetterWS {
@@ -46,10 +46,10 @@ export class BetterWS {
         const sock:Sock = new Sock(socket);
         this.allConnection.join(sock);
         
-        await this.flow.eval(this.events.onConnect, sock, '',);
+        await this.flow.eval(this.events.onConnect, sock, '');
         for await (const ev of socket.receive()) {
             try {
-                await this.flow.exec(socket, ev);
+                await this.flow.exec(sock, ev);
             } catch (e) {
                 await socket.close(1000).catch(console.error);
             }

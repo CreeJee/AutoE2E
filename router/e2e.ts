@@ -7,8 +7,8 @@ export const handler = (router: Router, app: Application) => {
     app.use(
         async (ctx: Context, next) => {
             try{
-                await ws.attach(ctx.request.serverRequest);
                 await next();
+                await ws.attach(ctx.request.serverRequest);
             }
             catch(e) {
                 console.error(e);

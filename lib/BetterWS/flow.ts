@@ -20,7 +20,7 @@ export class Flow {
 
     async exec (...value: any[]) {
         const flow = this._flowMap
-        let handlers: FlowHandlers = [this.default]
+        let handlers: FlowHandlers = [this.default];
         for (const flowCond of flow.keys()) {
             if (flowCond(...value)) {
                 handlers = flow.get(flowCond)
