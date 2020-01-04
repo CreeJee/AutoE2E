@@ -21,7 +21,7 @@ export class BetterWS {
     readonly events: Base.WSEventList;
     readonly allConnection: Layer.Group = new Layer.Group();
     constructor({
-        events = baseEvent.clone()
+        events = baseEvent.extract()
     }) {
         this.events = events;
         // now we choose gain event for string or Uint8Array
@@ -55,7 +55,7 @@ export class BetterWS {
             }
         }
         return this;
-    }   
+    }
     hasEvent() {
 
     }

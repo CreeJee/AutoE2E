@@ -1,4 +1,5 @@
 import * as Base from './type.ts';
+import handlers from './handlers/mod.ts'
 export class EventManager implements Base.WSEventList{
     onMessage: Base.SockHandleArray = [];
     onConnect: Base.SockHandleArray = [];
@@ -14,7 +15,7 @@ export class EventManager implements Base.WSEventList{
             }
         }
     }
-    clone(): Base.WSEventList {
+    extract(): Base.WSEventList {
         return {
             onMessage: [...this.onMessage],
             onConnect: [...this.onConnect],
@@ -26,9 +27,7 @@ export class EventManager implements Base.WSEventList{
     }
 }
 const _baseEvent = new EventManager();
-export class SockBaseEvent implements Base.ISockEvent{
-    constructor() {
-        _baseEvent.register(this)
-    }
+for (const Event of handlers) {
+    _baseEvent.register(new Event());
 }
 export const baseEvent = _baseEvent;
