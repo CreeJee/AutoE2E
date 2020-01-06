@@ -6,11 +6,11 @@ export type DisconnectEvent = WebSocketCloseEvent
 
 export type SockMessage = WebSocketMessage;
 export type SockEvent = SockMessage | PingEvent | PongEvent | DisconnectEvent;
-export type SockHandle = (sock:Sock, data: SockEvent) => Promise<void>;
+export type SockHandle = (sock:Sock, data: SockEvent, extra?: SockMessage) => Promise<void>;
 export type HandleArray<T extends SockHandle> =  T[] | [];
 export type SockHandleArray = HandleArray<SockHandle>;
 
-export type onMessageHandler = (sock: Sock, data: string) => Promise<void>;
+export type onMessageHandler = (sock: Sock, event: string, data: string) => Promise<void>;
 export type onConnectHandler = (sock: Sock, data: string) => Promise<void>;
 export type onPingHandler = (sock: Sock, data: PingEvent) => Promise<void>;
 export type onPongHandler = (sock: Sock, data: PongEvent) => Promise<void>;
@@ -40,7 +40,7 @@ export type WSEventList = {
 // }
 
 export interface ISockEvent extends SockEventType {
-    onMessage?(sock: Sock, data: string): Promise<void>;
+    onMessage?(sock: Sock, evnet: string, data: string): Promise<void>;
     onConnect?(sock: Sock, data: string): Promise<void>;
     onPing?(sock: Sock, data: PingEvent): Promise<void>;
     onPong?(sock: Sock, data: PongEvent): Promise<void>;

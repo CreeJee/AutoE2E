@@ -12,9 +12,24 @@ import * as Base from './type.ts'
 import * as Layer from './layer.ts'
 import {baseEvent} from './event.ts';
 import { Sock } from "./socket.ts";
+type onMessageQueue = Base.HandleArray<Base.onMessageHandler>;
 
+const MESSAGE_PAYLOAD_DELIMITER = ':';
 const _messageWrapper = (fn: Function) => (sock: Sock, msg: Base.SockMessage): boolean => {
     return fn(msg);
+}
+const _channelHook = (flow: Flow, eventList: onMessageQueue) :onMessageQueue => {
+    const refHandler = async (sock: Sock, msg: string) => {
+        if (msg.includes(MESSAGE_PAYLOAD_DELIMITER)) {
+            const delimiterPos = msg.indexOf(MESSAGE_PAYLOAD_DELIMITER);
+            const eventName = msg.slice(0, delimiterPos);
+            const payload = msg.slice(delimiterPos+1);
+            return flow.eval(eventList, sock, eventName, payload);
+        } else {
+            // global message or error
+        }
+    }
+    return [refHandler];
 }
 export class BetterWS {
     private flow: Flow;
@@ -27,7 +42,7 @@ export class BetterWS {
         // now we choose gain event for string or Uint8Array
         this.flow = new Flow(
             [
-                [_messageWrapper(isPrimitive('string')), this.events.onMessage],
+                [_messageWrapper(isPrimitive('string')), _channelHook(this.flow, this.events.onMessage)],
                 [_messageWrapper(isWebSocketPingEvent), this.events.onPing],
                 [_messageWrapper(isWebSocketPongEvent), this.events.onPong],
                 [_messageWrapper(isWebSocketCloseEvent), this.events.onDisconnect],
@@ -43,7 +58,7 @@ export class BetterWS {
             bufReader: r,
             bufWriter: w,
         });
-        const sock:Sock = new Sock(socket);
+        const sock: Sock = new Sock(socket);
         this.allConnection.join(sock);
         
         await this.flow.eval(this.events.onConnect, sock, '');
