@@ -42,13 +42,13 @@ export class BetterWS {
         // now we choose gain event for string or Uint8Array
         this.flow = new Flow(
             [
-                [_messageWrapper(isPrimitive('string')), _channelHook(this.flow, this.events.onMessage)],
                 [_messageWrapper(isWebSocketPingEvent), this.events.onPing],
                 [_messageWrapper(isWebSocketPongEvent), this.events.onPong],
                 [_messageWrapper(isWebSocketCloseEvent), this.events.onDisconnect],
                 [_messageWrapper(hasInstance(Uint8Array)), this.events.onBinary]
             ]
         );
+        this.flow.add(_messageWrapper(isPrimitive('string')), _channelHook(this.flow, this.events.onMessage));
     }
     async attach(request: ServerRequest) {
         const {conn, headers, r, w,} = request;
@@ -83,7 +83,7 @@ export class BetterWS {
     }
     _addCustomEvent(cond: Cond, eventName: string, ...handlers: Base.SockHandleArray) {
         const currentEvent: Base.SockHandleArray = this.events[eventName] = [];
-        this.flow.add(cond, ...currentEvent);
+        this.flow.add(cond, currentEvent);
         this._addEvent(eventName, ...handlers);
     }
     attachEvent() {

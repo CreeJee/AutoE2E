@@ -10,7 +10,7 @@ export type SockHandle = (sock:Sock, data: SockEvent, extra?: SockMessage) => Pr
 export type HandleArray<T extends SockHandle> =  T[] | [];
 export type SockHandleArray = HandleArray<SockHandle>;
 
-export type onMessageHandler = (sock: Sock, event: string, data: string) => Promise<void>;
+export type onMessageHandler = (sock: Sock, event: string, data?: string) => Promise<void>;
 export type onConnectHandler = (sock: Sock, data: string) => Promise<void>;
 export type onPingHandler = (sock: Sock, data: PingEvent) => Promise<void>;
 export type onPongHandler = (sock: Sock, data: PongEvent) => Promise<void>;

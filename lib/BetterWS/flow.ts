@@ -1,6 +1,6 @@
 export type FlowMap = Map<Function, Function>;
 export type Cond = (...v: any) => boolean
-export type FlowHandlers = Function[];
+export type FlowHandlers = (Function)[];
 export const isPrimitive = (typeName: string) => (v) => (typeof v === typeName);
 export const hasInstance = (classConstructor) => ((v) => v instanceof classConstructor);
 
@@ -39,11 +39,15 @@ export class Flow {
             handlers = [];
         }
         for await (const handler of handlers) {
-            await handler(...value)
+            try{
+                await handler(...value)
+            } catch (e) {
+                console.error(e);
+            }
         }
     }
 
-    add (cond: Cond, ...handlers: FlowHandlers) {
+    add (cond: Cond, handlers: FlowHandlers) {
         const flow = this._flowMap
         if (flow.has(cond)) {
             throw new FlowError('duplicated flow')
