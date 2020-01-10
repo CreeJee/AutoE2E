@@ -1,7 +1,7 @@
 
 const { readDir } = Deno;
 import  { basename, extname, resolve } from "./deps.ts";
-import { Application, Router, send } from "https://deno.land/x/oak/mod.ts";
+import { Application, Router, send as useStatic } from "https://deno.land/x/oak/mod.ts";
 
 import { server, moduleDir } from './Config.ts';
 // Require the framework and instantiate it
@@ -19,6 +19,20 @@ async function run() {
             await route(router, app);
             app.use(router.routes());
             app.use(router.allowedMethods());
+            app.use(
+                async (context, next) => {
+                    try{
+                        await useStatic(context, context.request.path, {
+                            root: `${Deno.cwd()}/client/build`,
+                            format: true,
+                            index: "index.html"
+                        });
+                    }
+                    catch(e) {
+                        await next();
+                    }
+                }
+            );
         }
         console.log(`server start on ${server.address}`)
         await app.listen(server.address);

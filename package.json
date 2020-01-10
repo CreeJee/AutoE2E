@@ -1,11 +1,11 @@
 {
-  "name": "deno-project",
+  "name": "auto-e2e",
   "version": "1.0.0",
-  "description": "A barebone deno project",
+  "description": "AutoE2E",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "deno --allow-read --allow-net ./Server.ts"
+    "serve": "cd ./client && npm run build && cd ../ && deno --allow-read --allow-net ./Server.ts"
   },
   "author": "",
   "license": "ISC",
