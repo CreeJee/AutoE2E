@@ -1,25 +1,56 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Layout, Card, Row, Col, Icon, Input } from 'antd';
+// import 'antd/dist/antd.css';
+import TaskList from './component/TaskList';
+import { TreeBehaivor } from './component/TreeBehaivor';
+
+
+const { Header, Content, Footer } = Layout;
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Header>
+        <TaskList theme="dark"/>
+      </Header>
+      <Content style={{ padding: '50px' }}>
+        <Row gutter={[16,32]}>
+          <Col span={8}>
+            <Card hoverable title="Task List">
+              <TaskList theme="light" mode="vertical"/>
+            </Card>
+          </Col>
+          <Col span={8}>
+            <Card 
+              hoverable 
+              title="Tree Behaivor"
+              actions={[
+                <Icon type="setting" key="setting" />,
+                <Icon type="edit" key="edit" />,
+                <Icon type="ellipsis" key="ellipsis" />,
+              ]}
+            >
+              <TreeBehaivor/>
+            </Card>
+          </Col>
+          <Col span={8}>  
+            <Card title="Property Editor">
+              <Row>
+                <Col span={12}>
+                  <Input suffix="px" addonBefore="width"></Input>
+                </Col>
+                <Col span={12}>                
+                  <Input suffix="px" addonBefore="height"></Input>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        </Row>
+      </Content>
+      <Footer>
+        Fotter
+      </Footer>
+    </Layout>
   );
 }
 

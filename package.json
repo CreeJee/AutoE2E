@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "cd ./client && npm run build && cd ../ && deno --allow-read --allow-net ./Server.ts"
+    "build": "cd ./client && npm run build && cd ../ && deno --allow-read --allow-net ./Server.ts",
+    "server": "cd ./client && npm run start && cd ../ && deno --allow-read --allow-net ./Server.ts"
   },
   "author": "",
   "license": "ISC",
