@@ -1,9 +1,8 @@
+import { Card, Col, Icon, Input, Layout, Row } from 'antd';
 import React from 'react';
-import { Layout, Card, Row, Col, Icon, Input } from 'antd';
 // import 'antd/dist/antd.css';
 import TaskList from './component/TaskList';
 import { TreeBehaivor } from './component/TreeBehaivor';
-
 
 const { Header, Content, Footer } = Layout;
 
@@ -14,15 +13,15 @@ const App: React.FC = () => {
         <TaskList theme="dark"/>
       </Header>
       <Content style={{ padding: '50px' }}>
-        <Row gutter={[16,32]}>
+        <Row gutter={[16, 32]}>
           <Col span={8}>
-            <Card hoverable title="Task List">
+            <Card hoverable={true} title="Task List">
               <TaskList theme="light" mode="vertical"/>
             </Card>
           </Col>
           <Col span={8}>
-            <Card 
-              hoverable 
+            <Card
+              hoverable={true}
               title="Tree Behaivor"
               actions={[
                 <Icon type="setting" key="setting" />,
@@ -33,14 +32,14 @@ const App: React.FC = () => {
               <TreeBehaivor/>
             </Card>
           </Col>
-          <Col span={8}>  
+          <Col span={8}>
             <Card title="Property Editor">
               <Row>
                 <Col span={12}>
-                  <Input suffix="px" addonBefore="width"></Input>
+                  <Input suffix="px" addonBefore="width"/>
                 </Col>
-                <Col span={12}>                
-                  <Input suffix="px" addonBefore="height"></Input>
+                <Col span={12}>
+                  <Input suffix="px" addonBefore="height"/>
                 </Col>
               </Row>
             </Card>
@@ -52,6 +51,6 @@ const App: React.FC = () => {
       </Footer>
     </Layout>
   );
-}
+};
 
 export default App;

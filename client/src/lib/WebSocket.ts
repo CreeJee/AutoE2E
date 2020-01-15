@@ -1,38 +1,43 @@
-import WebSocket from 'ws';
-import { IAdapter } from '../struct/SockAdapter';
-import { WS } from '../Config';
-export default class WsAdapter<T = object> implements IAdapter<T>{
+// import * as WebSocket from 'dom.lib'
+import { WS as WSConf } from '../Config';
+import { IAdapter, IResponseType } from '../struct/SockAdapter';
+
+
+
+export default class WsAdapter<T extends IResponseType> implements IAdapter<T> {
     private ws: WebSocket;
+    
     private messageStore: Map<string, T>;
     constructor() {
-        this.ws = new WebSocket(`ws://${WS.host}${WS.path}`, {});
+        const url = `${WSConf.protocol}://${WSConf.host}${WSConf.path}`;
+        this.ws = new WebSocket(url);
         this.messageStore = new Map<string, T>();
     }
-    async send(payload: T): Promise<void>{
-        return new Promise<void>((resolve, reject)=> {
-            this.ws.send(JSON.stringify(payload),(err) => err ? reject(err) : resolve());
-        })
+    public async send(payload: T): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.ws.send(JSON.stringify(payload));
+        });
     }
-    async get(key: string, force: boolean = false): Promise<T> {
-        const store = this.messageStore; 
+    public async get(key: string, force: boolean = false): Promise<T> {
+        const store = this.messageStore;
         if (store.has(key) && !force) {
-            return <T>store.get(key);
+            return store.get(key) as T;
         }
-        return this.observeLazyStack(key);
+        return this.lazyResponse(key);
     }
-    private async observeLazyStack(key: string): Promise<T> {
+    private async lazyResponse(key: string): Promise<T> {
         return new Promise((resolve, reject) => {
-            const offEvent = (event: { data: any; type: string; target: WebSocket }) => {
-                const data = event.data;
-                const value: T = <T>JSON.parse(data);
+            const offEvent = (event: { data: any; }) => {
+                const value: T = JSON.parse(event.data.toString()) as T;
                 this.messageStore.set(key, value);
-                if (key)
+                if (key === value.key) {
                     this.ws.removeEventListener('message', offEvent);
-                    resolve(value)
+                    resolve(value);
+                }
             };
-            this.ws.addEventListener('message',offEvent) 
-        })
+            this.ws.addEventListener('message', offEvent);
+        });
     }
-    
+
 }
 export const Instance = new WsAdapter();

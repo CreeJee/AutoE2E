@@ -1,0 +1,16 @@
+{
+  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-react"],
+  "defaultSeverity": "warning",
+  "rules": {
+    "quotemark":[true, "jsx-double", "single"],
+    "no-implicit-dependencies": false,
+    "no-submodule-imports": false,
+    "jsx-no-multiline-js": false
+  },
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts"
+    ]
+  }
+}

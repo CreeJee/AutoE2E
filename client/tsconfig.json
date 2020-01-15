@@ -1,12 +1,13 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "build/dist",
     "module": "esnext",
     "target": "es5",
     "lib": [
-      "es6",
-      "dom"
+      "ES6",
+      "DOM"
     ],
     "sourceMap": true,
     "allowJs": true,
@@ -16,17 +17,20 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "skipLibCheck": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
     "noEmit": true
   },
   "exclude": [
@@ -40,5 +44,14 @@
   ],
   "include": [
     "src"
+  ],
+  "plugins": [
+    {
+      "name": "typescript-tslint-plugin"
+    }
+  ],
+  "typeRoots": [
+    "./types",
+    "./node_modules/@types"
   ]
 }

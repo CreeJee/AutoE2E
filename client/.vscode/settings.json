@@ -1,0 +1,14 @@
+{
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "activationEvents": [
+        "workspaceContains:node_modules/.bin/jest",
+        "workspaceContains:node_modules/react-scripts/node_modules/.bin/jest",
+        "workspaceContains:node_modules/react-native-scripts",
+        "onCommand:io.orta.jest.start"
+    ],
+    "tslint.autoFixOnSave": true,
+    "editor.formatOnSave": false,
+    "[typescript]": {
+      "editor.formatOnSave": true 
+    }
+}
