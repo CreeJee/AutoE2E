@@ -1,22 +1,24 @@
-import { Card, Col, Icon, Input, Layout, Row } from 'antd';
+import { Card, Col, Icon, Layout, Row } from 'antd';
 import React from 'react';
+import { DocumentTree } from './component/DocumentTree';
 // import 'antd/dist/antd.css';
 import TaskList from './component/TaskList';
-import { TreeBehaivor } from './component/TreeBehaivor';
+import PropertyGrid from './component/PropertyGrid';
 
 const { Header, Content, Footer } = Layout;
 
 const App: React.FC = () => {
+
   return (
     <Layout>
       <Header>
-        <TaskList theme="dark"/>
+        <TaskList theme="dark" name="project"/>
       </Header>
       <Content style={{ padding: '50px' }}>
         <Row gutter={[16, 32]}>
           <Col span={8}>
             <Card hoverable={true} title="Task List">
-              <TaskList theme="light" mode="vertical"/>
+              <TaskList theme="light" mode="vertical" name="task"/>
             </Card>
           </Col>
           <Col span={8}>
@@ -29,19 +31,12 @@ const App: React.FC = () => {
                 <Icon type="ellipsis" key="ellipsis" />,
               ]}
             >
-              <TreeBehaivor/>
+              <DocumentTree/>
             </Card>
           </Col>
           <Col span={8}>
             <Card title="Property Editor">
-              <Row>
-                <Col span={12}>
-                  <Input suffix="px" addonBefore="width"/>
-                </Col>
-                <Col span={12}>
-                  <Input suffix="px" addonBefore="height"/>
-                </Col>
-              </Row>
+              <PropertyGrid/>
             </Card>
           </Col>
         </Row>

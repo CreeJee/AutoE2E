@@ -1,15 +1,17 @@
 import { Primitive } from '../struct/Base';
+import { ILoadable } from '../struct/Interface/Loadable';
 import { DelayTaskFunction, ITaskMethod } from '../struct/Task';
-import { Instance as WsAdapter} from './WebSocket';
+import { Instance as adapter} from './Socket';
 function sendImplents<T>(task: string, ...param: Primitive[]): DelayTaskFunction<T> {
     return async (current: T) => {
-        return WsAdapter.send({ key: 'task', data: {current, task, param}});
+        return adapter.send({ key: 'task', data: {current, task, param}});
     };
 }
 export let sendOverride = sendImplents;
-export class DocNode {
+export class DocNode implements ILoadable<DocNode>{
     public children: DocNode[] = [];
     public uid: number = NaN;
+    public name: string = '';
     constructor(uid: number, ...children: DocNode[]) {
         this.uid = uid;
         this.children.push(...children);
@@ -17,8 +19,9 @@ export class DocNode {
     public async exec(...tasks: Array<DelayTaskFunction<DocNode>>): Promise<void> {
         // const result = Promise.all(tasks.map(v => v(this)));
     }
-    public async load() {
-        return WsAdapter.get('taskQueue');
+    public async load():Promise<DocNode> {
+        const response = await adapter.get('taskQueue', true);
+        return response.data as DocNode;
     }
     // public _load(obj: object) {}
 }

@@ -1,6 +1,6 @@
 // import * as WebSocket from 'dom.lib'
-import { WS as WSConf } from '../Config';
-import { IAdapter, IResponseType } from '../struct/SockAdapter';
+import { WS as WSConf } from '../../../Config';
+import { IAdapter, IResponseType } from '../../../struct/Interface/SockAdapter';
 
 
 

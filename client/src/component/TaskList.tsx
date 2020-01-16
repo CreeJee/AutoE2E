@@ -8,26 +8,28 @@ import React, { PropsWithChildren, useEffect, useState } from 'react';
 // tslint:disable-next-line: no-submodule-imports
 import 'antd/dist/antd.css';
 
+import {Instance as adapter} from '../lib/Socket'
 import {ITaskState} from '../struct/Data';
 
 export interface ITaskProps {
     theme?: MenuTheme;
     mode?: MenuMode;
+    name: string, 
 }
-function fetchTask<T>(setFunctor: React.Dispatch<React.SetStateAction<T>>) {
+function fetchTask<T>(name: string ,setFunctor: React.Dispatch<React.SetStateAction<T>>) {
     // fetch()
-    return (value: T) => setFunctor(value);
+    return () => {
+        adapter.get(name).then((value: object) => {
+            setFunctor(value as unknown as T);
+        })
+    }
 }
 const TaskList: React.FC<ITaskProps> = (props: PropsWithChildren<ITaskProps>, context?: any) => {
     const [taskList, setTask] = useState<ITaskState[]>([]);
-    const fetchList = fetchTask<ITaskState[]>(setTask);
+    const fetchList = fetchTask<ITaskState[]>(props.name, setTask);
     useEffect(() => {
-        fetchList([
-            {name: 'Project 1'},
-            {name: 'Project 2'},
-            {name: 'Project 3'},
-        ]);
-    }, []);
+        fetchList();
+    }, [fetchList, props.name]);
     // useLayoutEffect(() => {
     //     fetchTaskList();
     // })
