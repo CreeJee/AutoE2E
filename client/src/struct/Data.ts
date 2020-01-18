@@ -7,6 +7,11 @@ export interface ITagState {
     type: Base.ColorType;
     message: string;
 }
+export interface IDocumentNode {
+    children: IDocumentNode[];
+    uid: number;
+    name: string;
+}
 export enum TagEnum {
     SUCCESS = 0,
     WARN = -1,

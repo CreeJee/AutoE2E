@@ -1,10 +1,11 @@
 import * as deps from './deps.ts'
-import { WebSocketMessage, WebSocket } from './deps.ts'
-import { Sock } from './socket.ts'
-import { SockMessage } from './type.ts';
-export const defaultSockKey = 'default'
-export class Group {
-    protected groups: Sock[] = new Array<Sock>();
+import { WebSocketMessage, WebSocket, ServerRequest } from './deps.ts'
+import { Sock, ISocket } from './socket.ts'
+import { SockMessage, } from './type.ts';
+
+export const defaultSockKey = 'default';
+export class Group<T extends ISocket = ISocket> {
+    public readonly groups: T[] = new Array<T>();
     constructor (...items) {
       this.groups.push(...items)
     }
@@ -15,9 +16,9 @@ export class Group {
       }
     }
 
-    async sendTo (socket: Sock, data: SockMessage): Promise<Sock> {
+    async sendTo (socket: T, data: SockMessage): Promise<T> {
       const groups = this.groups
-      let current: Sock = null
+      let current: T = null
       if (!groups.includes(socket)) {
         throw new Error('socket is must joined')
       }
@@ -26,17 +27,19 @@ export class Group {
       return current
     }
 
-    async join (socket: Sock): Promise<void> {
+    async join (socket: T): Promise<void> {
       if (this.groups.includes(socket)) {
         throw new Error('socket is alreay joined')
       };
       this.groups.push(socket)
     }
 
-    async leave (socket: Sock): Promise<void> {
+    async leave (socket: T): Promise<void> {
       if (!this.groups.includes(socket)) {
         throw new Error('socket is Must join room')
       }
+      this.groups.splice(this.groups.indexOf(socket),1);
+      await socket.close({code: 1000});
     }
 };
 export abstract class Layer<T> extends Map<string, T> {

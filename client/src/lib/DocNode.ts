@@ -1,14 +1,15 @@
 import { Primitive } from '../struct/Base';
+import { IDocumentNode } from '../struct/Data';
 import { ILoadable } from '../struct/Interface/Loadable';
 import { DelayTaskFunction, ITaskMethod } from '../struct/Task';
 import { Instance as adapter} from './Socket';
 function sendImplents<T>(task: string, ...param: Primitive[]): DelayTaskFunction<T> {
     return async (current: T) => {
-        return adapter.send({ key: 'task', data: {current, task, param}});
+        return adapter.send({ key: 'taskQueue', data: {current, task, param}});
     };
 }
 export let sendOverride = sendImplents;
-export class DocNode implements ILoadable<DocNode>{
+export class DocNode implements ILoadable<DocNode>, IDocumentNode{
     public children: DocNode[] = [];
     public uid: number = NaN;
     public name: string = '';

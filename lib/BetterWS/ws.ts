@@ -6,12 +6,13 @@ import {
     isWebSocketPingEvent,
     isWebSocketPongEvent,
     WebSocket,
-    ServerRequest
+    ServerRequest,
+    serve
 } from './deps.ts';
 import * as Base from './type.ts'
 import * as Layer from './layer.ts'
 import {baseEvent} from './event.ts';
-import { Sock } from "./socket.ts";
+import { Sock, ISocket } from "./socket.ts";
 type onMessageQueue = Base.HandleArray<Base.onMessageHandler>;
 
 const MESSAGE_PAYLOAD_DELIMITER = ':';
@@ -31,10 +32,13 @@ const _channelHook = (flow: Flow, eventList: onMessageQueue) :onMessageQueue => 
     }
     return [refHandler];
 }
+const _findSocketRequest = function(request: ServerRequest){
+  return (item: ISocket) => item.serverRequest === request ? item : undefined;
+}
 export class BetterWS {
     private flow: Flow;
     readonly events: Base.WSEventList;
-    readonly allConnection: Layer.Group = new Layer.Group();
+    readonly all: Layer.Group = new Layer.Group();
     constructor({
         events = baseEvent.extract()
     }) {
@@ -51,28 +55,25 @@ export class BetterWS {
         this.flow.add(_messageWrapper(isPrimitive('string')), _channelHook(this.flow, this.events.onMessage));
     }
     async attach(request: ServerRequest) {
-        const {conn, headers, r, w,} = request;
-        const socket = await acceptWebSocket({
-            conn,
-            headers,
-            bufReader: r,
-            bufWriter: w,
-        });
-        const sock: Sock = new Sock(socket);
-        this.allConnection.join(sock);
-        
-        await this.flow.eval(this.events.onConnect, sock, '');
-        for await (const ev of socket.receive()) {
-            try {
-                await this.flow.exec(sock, ev);
-            } catch (e) {
-                await socket.close(1000).catch(console.error);
+        const connectionGroup = this.all;
+        const socket: ISocket = new Sock(request);
+        await socket.init();
+        await this.flow.eval(this.events.onConnect, socket, '');
+        connectionGroup.join(socket);
+        try{
+            const  sockMessage = socket.originalSock.receive();
+            while(true) {
+                const {done, value} = await sockMessage.next();
+                if(done) {
+                    break;
+                }
+                await this.flow.exec(socket, value);
             }
+        } 
+        catch (e) {
+            await socket.close({code: 3000}).catch(console.error);
         }
         return this;
-    }
-    hasEvent() {
-
     }
     _addEvent(eventName: string, ...handlers: Base.SockHandleArray) {
         const {events} = this;
@@ -88,5 +89,18 @@ export class BetterWS {
     }
     attachEvent() {
 
+    }
+    async serve(address) {
+        for await (const req of serve(address)) {
+            try{
+                this.attach(req);
+            } catch(e) {
+                this.onError(req, e)
+            }
+        }
+    }
+    onError(req: ServerRequest, err: Error) {
+        const response = new Response('need websocket', 200,[], req.conn.rid, false);
+        req.respond(response);
     }
 }

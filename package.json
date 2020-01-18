@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "just-server": "deno --allow-read --allow-net ./Server.ts",
+    "just-ws": "deno --allow-read --allow-net ./Socket.ts",
     "just-client-develop": "cd ./client && npm run start",
     "build": "cd ./client && npm run build && cd ../ && npm run just-server",
     "server": "cd ./client && npm run start && cd ../ && npm run just-server"

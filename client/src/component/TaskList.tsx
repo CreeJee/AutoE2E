@@ -19,7 +19,7 @@ export interface ITaskProps {
 function fetchTask<T>(name: string ,setFunctor: React.Dispatch<React.SetStateAction<T>>) {
     // fetch()
     return () => {
-        adapter.get(name).then((value: object) => {
+        adapter.get(`${name}`).then((value: object) => {
             setFunctor(value as unknown as T);
         })
     }
