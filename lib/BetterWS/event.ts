@@ -7,23 +7,26 @@ export class EventManager implements Base.WSEventList{
     onPong: Base.SockHandleArray = [];
     onDisconnect: Base.SockHandleArray = [];
     onBinary: Base.SockHandleArray = [];
+    private iterateHooks: string[] = Object.getOwnPropertyNames(this);
     register(eventInstance: Base.ISockEvent) {
-        for (const eventName of Object.getOwnPropertyNames(this)) {
-            const currentProp = eventInstance[eventName];
-            if(currentProp instanceof Function) {
-                this[eventName].push(currentProp);
-            }
+        for (const eventName of this.iterateHooks) {
+            const currentProp: Base.SockHandle = eventInstance[eventName];
+            // if(currentProp instanceof Function) {
+            //     this[eventName].push(currentProp);
+            // }
+            this[eventName].push(currentProp);
         }
     }
-    extract(): Base.WSEventList {
-        return {
-            onMessage: [...this.onMessage],
-            onConnect: [...this.onConnect],
-            onPing: [...this.onPing],
-            onPong: [...this.onPong],
-            onDisconnect: [...this.onDisconnect],
-            onBinary: [...this.onBinary]
+    add(EventClass: Base.ISockEventClass) {
+        this.register(new EventClass);
+    }
+    clone(): EventManager {
+        const eventManager = new EventManager();
+        for (const eventName of this.iterateHooks) {
+            const currentProp: Base.SockHandleArray = this[eventName];
+            eventManager[eventName].push(...currentProp);
         }
+        return eventManager;
     }
 }
 const _baseEvent = new EventManager();

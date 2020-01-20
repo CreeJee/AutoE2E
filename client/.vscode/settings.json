@@ -6,9 +6,18 @@
         "workspaceContains:node_modules/react-native-scripts",
         "onCommand:io.orta.jest.start"
     ],
-    "tslint.autoFixOnSave": true,
-    "editor.formatOnSave": false,
+    "eslint.validate": ["javascript", "javascriptreact"],
+    "editor.formatOnSave": true,
+    "[javascript]": {
+        "editor.formatOnSave": false
+    },
+    "[javascriptreact]": {
+        "editor.formatOnSave": false
+    },
     "[typescript]": {
-      "editor.formatOnSave": true 
+        "editor.formatOnSave": false
+    },
+    "[typescriptreact]": {
+        "editor.formatOnSave": false
     }
 }

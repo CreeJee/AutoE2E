@@ -1,15 +1,21 @@
 import { Primitive } from '../struct/Base';
 import { IDocumentNode } from '../struct/Data';
-import { ILoadable } from '../struct/Interface/Loadable';
+import { AdapterHandler, IResponseType } from '../struct/Interface/SockAdapter';
 import { DelayTaskFunction, ITaskMethod } from '../struct/Task';
 import { Instance as adapter} from './Socket';
+import { useAdapterState } from 'src/hooks/useAdapter';
+const EVENT_NAME = 'DocumentTree';
+
+type ResponseNode = IResponseType<DocNode>;
+export type HandlerType = AdapterHandler<ResponseNode>;
 function sendImplents<T>(task: string, ...param: Primitive[]): DelayTaskFunction<T> {
     return async (current: T) => {
-        return adapter.send({ key: 'taskQueue', data: {current, task, param}});
+        return adapter.send({ key: EVENT_NAME, data: {current, task, param}});
     };
 }
+
 export let sendOverride = sendImplents;
-export class DocNode implements ILoadable<DocNode>, IDocumentNode{
+export class DocNode implements IDocumentNode{
     public children: DocNode[] = [];
     public uid: number = NaN;
     public name: string = '';
@@ -17,13 +23,13 @@ export class DocNode implements ILoadable<DocNode>, IDocumentNode{
         this.uid = uid;
         this.children.push(...children);
     }
-    public async exec(...tasks: Array<DelayTaskFunction<DocNode>>): Promise<void> {
+    public async exec(): Promise<void> {
         // const result = Promise.all(tasks.map(v => v(this)));
     }
-    public async load():Promise<DocNode> {
-        const response = await adapter.get('taskQueue', true);
-        return response.data as DocNode;
+    static useState(){
+        return useAdapterState<DocNode>(EVENT_NAME, new DocNode(0));
     }
+    
     // public _load(obj: object) {}
 }
 export const TaskList: ITaskMethod<DocNode> = {
@@ -40,7 +46,7 @@ export const TaskList: ITaskMethod<DocNode> = {
         return sendOverride<DocNode>('doubleClick');
     },
     mouseEnter(isOver: boolean) {
-        return sendOverride<DocNode>('mouseEnter');
+        return sendOverride<DocNode>('mouseEnter', isOver);
     },
     mouseLeave() {
         return sendOverride<DocNode>('mouseLeave');

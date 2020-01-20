@@ -1,20 +1,15 @@
-import React,{ PropsWithChildren, useEffect, useState } from 'react';
-import {Instance as adapter} from '../lib/Socket'
-import { IResponseType } from '../struct/Interface/SockAdapter';
+import React from 'react';
 import DiviedRow from './DiviedRow';
-export const Property: React.FC<{}> = (props: PropsWithChildren<{}>, context?: any) => {
-    const [objectEnum, setEnum] = useState({});
-    const bindHandler = (response: IResponseType) => {
-        setEnum(response.data)
-    }
-    useEffect(()=> {    
-        adapter.bind('Property', bindHandler);
-        return () => adapter.unBind('Property', bindHandler);
-    })
+import { useAdapterState } from 'src/hooks/useAdapter';
+import { Button } from 'antd';
+export const Property: React.FC<{}> = () => {
+    const [property] = useAdapterState<object>('Property', {});
     return (
         <DiviedRow size={2}>
-            {}
+            {Object.keys(property).map(key => (
+                <Button>{key}</Button>
+            ))}
         </DiviedRow>
-    )
+    );
 };
 export default Property;

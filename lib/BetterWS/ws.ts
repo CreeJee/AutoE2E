@@ -11,7 +11,7 @@ import {
 } from './deps.ts';
 import * as Base from './type.ts'
 import * as Layer from './layer.ts'
-import {baseEvent} from './event.ts';
+import {baseEvent, EventManager} from './event.ts';
 import { Sock, ISocket } from "./socket.ts";
 type onMessageQueue = Base.HandleArray<Base.onMessageHandler>;
 
@@ -32,15 +32,12 @@ const _channelHook = (flow: Flow, eventList: onMessageQueue) :onMessageQueue => 
     }
     return [refHandler];
 }
-const _findSocketRequest = function(request: ServerRequest){
-  return (item: ISocket) => item.serverRequest === request ? item : undefined;
-}
 export class BetterWS {
     private flow: Flow;
-    readonly events: Base.WSEventList;
+    readonly events: EventManager;
     readonly all: Layer.Group = new Layer.Group();
     constructor({
-        events = baseEvent.extract()
+        events = baseEvent.clone()
     }) {
         this.events = events;
         // now we choose gain event for string or Uint8Array
@@ -75,20 +72,8 @@ export class BetterWS {
         }
         return this;
     }
-    _addEvent(eventName: string, ...handlers: Base.SockHandleArray) {
-        const {events} = this;
-        if (!(eventName in events)) {
-            throw new Error(`not exist event [eventName: ${eventName}]`);
-        }
-        events[eventName].push(...handlers);
-    }
-    _addCustomEvent(cond: Cond, eventName: string, ...handlers: Base.SockHandleArray) {
-        const currentEvent: Base.SockHandleArray = this.events[eventName] = [];
-        this.flow.add(cond, currentEvent);
-        this._addEvent(eventName, ...handlers);
-    }
-    attachEvent() {
-
+    addEventListener(event: Base.ISockEventClass) {
+        this.events.add(event);
     }
     async serve(address) {
         for await (const req of serve(address)) {

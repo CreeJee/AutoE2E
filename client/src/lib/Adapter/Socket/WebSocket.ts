@@ -25,20 +25,24 @@ export default class WsAdapter<T extends IResponseType> implements IAdapter<T> {
             
         })
     }
-    public async send(payload: T): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            this.ws.send(JSON.stringify(payload));
-        });
+    public send<RequestType extends T = T>(payload: RequestType): void {
+        this.ws.send(`${payload.key}:${JSON.stringify(payload.data)}`);
     }
-    public async get(key: string, force: boolean = false): Promise<T> {
+    
+    public async get<ResponseType extends T = T>(key: string, force: boolean = false): Promise<ResponseType> {
         const store = this.messageStore;
         if (store.has(key) && !force) {
-            return store.get(key) as T;
+            return store.get(key) as ResponseType;
         }
         return this.lazyResponse(key);
     }
-    public bind(key: string, on: AdapterHandler<T>) {
-        type Adapter = Array<AdapterHandler<T>>;
+    public async dispatch<RequestType extends T = T, ResponseType extends T = T>(key: string, payload: RequestType){
+        const binded = this.get<ResponseType>(key, true);
+        this.send<RequestType>(payload);
+        return binded;
+    };
+    public bind<ResponseType extends T = T>(key: string, on: AdapterHandler<ResponseType>) {
+        type Adapter = Array<AdapterHandler<ResponseType>>;
         let store:Adapter;
         if (!this.eventStore.has(key)) {
             this.eventStore.set(key, store = [])
@@ -47,8 +51,8 @@ export default class WsAdapter<T extends IResponseType> implements IAdapter<T> {
         }
         store.push(on);
     }
-    public unBind(key: string, on: AdapterHandler<T>) {
-        type Adapter = Array<AdapterHandler<T>>;
+    public unBind<ResponseType extends T = T>(key: string, on: AdapterHandler<ResponseType>) {
+        type Adapter = Array<AdapterHandler<ResponseType>>;
         if (this.eventStore.has(key)) {
             const store: Adapter = this.eventStore.get(key) as Adapter;
             const pos = store.indexOf(on);
@@ -57,10 +61,10 @@ export default class WsAdapter<T extends IResponseType> implements IAdapter<T> {
             }
         }
     }
-    private async lazyResponse(key: string): Promise<T> {
-        return new Promise((resolve, reject) => {
+    private async lazyResponse<ResponseType extends T = T>(key: string): Promise<ResponseType> {
+        return new Promise((resolve) => {
             const offEvent = (event: { data: any; }) => {
-                const value: T = JSON.parse(event.data.toString()) as T;
+                const value: ResponseType = JSON.parse(event.data.toString()) as ResponseType;
                 this.messageStore.set(key, value);
                 if (key === value.key) {
                     this.ws.removeEventListener('message', offEvent);
@@ -68,7 +72,6 @@ export default class WsAdapter<T extends IResponseType> implements IAdapter<T> {
                 }
             };
             this.ws.addEventListener('message', offEvent);
-            console.log(this.ws)
             // this.ws.send(`{key:${key}, data:'request'}`);
         });
     }

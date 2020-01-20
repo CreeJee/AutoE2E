@@ -47,3 +47,6 @@ export interface ISockEvent extends SockEventType {
     onDisconnect?(sock: Sock, data: DisconnectEvent): Promise<void>;
     onBinary?(sock: Sock, data: Uint8Array): Promise<void>;
 }
+export interface ISockEventClass {
+    new (...extra: any): ISockEvent;
+}
