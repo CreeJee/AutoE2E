@@ -1,16 +1,23 @@
-import { ISockEvent, Sock, DisconnectEvent } from "../lib/BetterWS/mod";
-import  { basename, extname } from "../deps.ts";
+import { ISockEvent, Sock, DisconnectEvent } from "../lib/BetterWS/mod.ts";
+import  { basename, extname, resolve } from "../deps.ts";
 type PluginsHandler = (socket: Sock, data: string) => Promise<void>;
 
-const basePath = './messageEvent';
 const { readDir } = Deno;
-const dirList = await readDir(basePath);
-const pluginsMapper : Map<string, PluginsHandler> = (
+
+
+const basePath = './OnMessage';
+const dir = resolve('./socket',`${basePath}`);
+const dirList = await readDir(dir);
+const pluginsMapper : Map<string, PluginsHandler> = new Map<string, PluginsHandler>();
+(
     await Promise.all(
         dirList.filter(
             (file: Deno.FileInfo) => file.isFile()
         ).map(
-            (file: Deno.FileInfo) => import(`${basePath}/${file.name}`)
+            (file: Deno.FileInfo) => {
+                const path = `${basePath}/${file.name}`;
+                return import(path)             
+            }
         )
     )
 ).reduce(
@@ -20,13 +27,10 @@ const pluginsMapper : Map<string, PluginsHandler> = (
         accr.set(event,moduleObj.default);
         return accr;
     },
-    new Map()
+    pluginsMapper
 );
 
-export class DocumentTree implements ISockEvent{
-    async onConnect (socket: Sock, data: string): Promise<void> {
-
-    }
+export class SocketRunner implements ISockEvent{
     async onMessage (socket:Sock, event: string, data: string): Promise<void> {
         const handler = pluginsMapper.get(event);
         if(typeof handler === 'function') {
@@ -34,7 +38,4 @@ export class DocumentTree implements ISockEvent{
         }
 
     }
-    async onDisconnect(socket: Sock, data: DisconnectEvent): Promise<void> {
-      
-    }
-  }
+}
