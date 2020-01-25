@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "AutoE2E": {
+      "schemaPath": "./graph-socket/scheme/index.graphql",
+      "extensions": {
+        "endpoints": {
+          "dev": {
+            "url": "http://127.0.0.1",
+            "subscription": "http://127.0.0.1/desc"
+          },
+          "prod": {
+            "url": "http://127.0.0.1",
+            "subscription": "http://127.0.0.1/product/desc"
+          }
+        }
+      }
+    }
+  }
+}

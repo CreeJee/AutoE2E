@@ -40,7 +40,8 @@ export class Flow {
         }
         for await (const handler of handlers) {
             try{
-                await handler(...value)
+                // todo: remove
+                await handler(...value);
             } catch (e) {
                 console.error(e);
             }

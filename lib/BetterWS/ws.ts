@@ -55,6 +55,7 @@ export class BetterWS {
         const connectionGroup = this.all;
         const socket: ISocket = new Sock(request);
         await socket.init();
+        
         await this.flow.eval(this.events.onConnect, socket, '');
         connectionGroup.join(socket);
         try{

@@ -11,10 +11,9 @@ export class EventManager implements Base.WSEventList{
     register(eventInstance: Base.ISockEvent) {
         for (const eventName of this.iterateHooks) {
             const currentProp: Base.SockHandle = eventInstance[eventName];
-            // if(currentProp instanceof Function) {
-            //     this[eventName].push(currentProp);
-            // }
-            this[eventName].push(currentProp);
+            if(currentProp instanceof Function) {
+                this[eventName].push(currentProp);
+            }
         }
     }
     add(EventClass: Base.ISockEventClass) {

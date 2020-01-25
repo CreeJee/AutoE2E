@@ -1,20 +1,26 @@
 {
-  "name": "auto-e2e",
-  "version": "1.0.0",
-  "description": "AutoE2E",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "just-server": "deno --allow-read --allow-net ./Server.ts",
-    "just-ws": "deno --allow-read --allow-net ./Socket.ts",
-    "just-client-develop": "cd ./client && npm run start",
-    "build": "cd ./client && npm run build && cd ../ && npm run just-server",
-    "server": "cd ./client && npm run start && cd ../ && npm run just-server"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "deno_ls_plugin": "^0.1.0",
-    "typescript": "^3.3.1"
-  }
+    "name": "auto-e2e",
+    "version": "1.0.0",
+    "description": "AutoE2E",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "just-ws": "deno --allow-read --allow-net ./Socket.ts",
+        "just-client-develop": "cd ./client && npm run start",
+        "build": "cd ./client && npm run build && cd ../ && npm run just-server",
+        "server": "cd ./client && npm run start && cd ../ && npm run just-server",
+        "just-server": "deno --allow-read --allow-net ./Server.ts"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "deno_ls_plugin": "^0.1.0",
+        "typescript": "^3.3.1"
+    },
+    "devDependencies": {
+        "@types/graphql": "^14.5.0",
+        "@types/node": "^13.5.0",
+        "graphql": "^14.5.8",
+        "graphql-tools": "^4.0.6"
+    }
 }
