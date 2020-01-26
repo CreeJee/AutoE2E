@@ -1,20 +1,17 @@
 import { Primitive } from '../struct/Base';
-import { IDocumentNode } from '../struct/Data';
+import { IDocumentNode, ITaskMethod, ITask, DelayTaskFunction } from '../struct/Data';
 import { AdapterHandler, IResponseType } from '../struct/Interface/SockAdapter';
-import { DelayTaskFunction, ITaskMethod } from '../struct/Task';
 import { Instance as adapter} from './Socket';
 import { useAdapterState } from 'src/hooks/useAdapter';
-const EVENT_NAME = 'DocumentTree';
-
-type ResponseNode = IResponseType<DocNode>;
+export type ResponseNode = IResponseType<DocNode>;
 export type HandlerType = AdapterHandler<ResponseNode>;
-function sendImplents<T>(task: string, ...param: Primitive[]): DelayTaskFunction<T> {
+
+const EVENT_NAME = 'DocumentTree';
+export function sendOverride<T>(task: string, ...param: Primitive[]): DelayTaskFunction<T> {
     return async (current: T) => {
-        return adapter.send({ key: EVENT_NAME, data: {current, task, param}});
+        return adapter.send<IResponseType<ITask<T>>>({key:EVENT_NAME, data: {current, task, param}});
     };
 }
-
-export let sendOverride = sendImplents;
 export class DocNode implements IDocumentNode{
     public children: DocNode[] = [];
     public uid: number = NaN;
@@ -22,6 +19,7 @@ export class DocNode implements IDocumentNode{
     constructor(uid: number, ...children: DocNode[]) {
         this.uid = uid;
         this.children.push(...children);
+        
     }
     public async exec(): Promise<void> {
         // const result = Promise.all(tasks.map(v => v(this)));

@@ -9,16 +9,16 @@ import React, { PropsWithChildren } from 'react';
 import 'antd/dist/antd.css';
 
 import { useAdapterState } from 'src/hooks/useAdapter';
-import { ITaskState } from '../struct/Data';
+import { IItemState } from '../struct/Data';
 
-export interface ITaskProps {
+export interface IThemeProps {
     theme?: MenuTheme;
     mode?: MenuMode;
     name: string;
 }
 
-const TaskList: React.FC<ITaskProps> = (props: PropsWithChildren<ITaskProps>) => {
-    const [taskList] = useAdapterState<ITaskState[]>(props.name, []);
+const ItemList: React.FC<IThemeProps> = (props: PropsWithChildren<ITaskProps>) => {
+    const [taskList] = useAdapterState<IItemState[]>(props.name, []);
     return (
         <Menu
             theme={props.theme || 'dark'}
@@ -31,4 +31,4 @@ const TaskList: React.FC<ITaskProps> = (props: PropsWithChildren<ITaskProps>) =>
         </Menu>
     );
 };
-export default TaskList;
+export default ItemList;

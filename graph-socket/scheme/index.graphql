@@ -1,3 +1,49 @@
+#lib
+union Primitive = string | number | boolean | object
+enum Property {
+    width
+    height
+}
+enum ColorType {
+    blue
+    yellow
+    red
+}
+#atomic service type
+type Action {
+    uid: ID!
+}
+type ItemState {
+    name: String
+}
+type TagState {
+    name: String
+    type: ColorType
+    message: String
+}
+type DocumentNode {
+    children: [IDocumentNode!]
+    uid: ID
+    name: String
+}
+type DocNode {
+    uid: ID
+}
+type Task {
+    current: DocNode
+    task: String
+    param: [Primitive!]
+}
+#mapping
+type Tasks {
+    items: [Task!]
+}
+
+#RootType
 type Query {
-    hello: String
+    Action: Action
+    Tasks: Tasks
+    Property: Property
+    TagState: TagState
+    DocNode: DocNode
 }

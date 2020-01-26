@@ -4,7 +4,7 @@ import React from 'react';
 import { DocumentTree } from './component/DocumentTree';
 import { Property } from './component/Property';
 // import 'antd/dist/antd.css';
-import TaskList from './component/TaskList';
+import ItemList from './component/ItemList';
 
 const { Header, Content, Footer } = Layout;
 
@@ -12,18 +12,18 @@ const App: React.FC = () => {
     return (
         <Layout>
             <Header>
-                <TaskList theme="dark" name="Project" />
+                <ItemList theme="dark" name="Project" />
             </Header>
             <Content style={{ padding: '50px' }}>
                 <Row gutter={[16, 32]}>
                     <Col span={4}>
                         <Card hoverable={true} title="Task List">
-                            <TaskList theme="light" mode="vertical" name="Task" />
+                            <ItemList theme="light" mode="vertical" name="Task" />
                         </Card>
                     </Col>
                     <Col span={4}>
                         <Card hoverable={true} title="Record">
-                            <TaskList theme="light" mode="vertical" name="Record" />
+                            <ItemList theme="light" mode="vertical" name="Record" />
                         </Card>
                     </Col>
 

@@ -42,20 +42,17 @@ const resolvers: PluginsResolver = {};
         (accr, moduleObj, nth) => {
             const fileName = dirList[nth].name;
             const event = basename(fileName,extname(fileName));
-            // accr[event] = moduleObj.default;
-            Object.assign(accr, moduleObj.default);
+            accr[event] = moduleObj.default;
             return accr;
         },
         resolvers
     );
 }
 const schema =  graphql.buildSchema(typeDefs);
-console.log(typeDefs, resolvers);
 //TODO : divied graphQL payload
 export class SocketRunner implements ISockEvent{
     async onMessage (socket:Sock, event: string, data: string): Promise<void> {
         if(event === 'graphql') {
-            console.log(data);
             const result = await graphql.graphql(schema, data, resolvers);
             socket.send(JSON.stringify(result));
         }
