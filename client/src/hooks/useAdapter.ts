@@ -1,4 +1,5 @@
 import { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import graphql from 'graphql';
 import { IResponseType, AdapterHandler } from 'src/struct/Interface/SockAdapter';
 import { Instance as adapter } from '../lib/Socket';
 
@@ -7,7 +8,7 @@ type AdapterHandlerType<T> = AdapterHandler<AdapterType<T>>;
 //react type wrapping
 type reactStateType<T> = T;
 type reactDispatchType<T> = Dispatch<SetStateAction<reactStateType<T>>>;
-type reactUseStateType<T> = [reactStateType<T>, reactDispatchType<T>]
+type reactUseStateType<T> = [reactStateType<T>, reactDispatchType<T>];
 export function useAdapterState<ResponseType>(key: string, initValue: ResponseType): reactUseStateType<ResponseType> {
     const originState = useState<ResponseType>(initValue);
     const [response, setResponse] = originState;
@@ -21,4 +22,9 @@ export function useAdapterState<ResponseType>(key: string, initValue: ResponseTy
         }
     }, [response, key])
     return originState;
+}
+
+export function useGqlState<ResponseType>(key: string, query: string) {
+    graphql<ResponseType>()
+    const state = useAdapterState<ResponseType>(key, query);
 }

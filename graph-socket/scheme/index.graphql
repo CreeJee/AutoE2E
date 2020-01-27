@@ -1,49 +1,54 @@
 #lib
-union Primitive = string | number | boolean | object
+union Primitive = String | Int | Boolean | Float
 enum Property {
     width
     height
 }
-enum ColorType {
-    blue
-    yellow
-    red
+enum TagEnum {
+    SUCCESS
+    WARN
+    TEST_ERROR
+    UNKNOWN_ERR
 }
-#atomic service type
-type Action {
+enum LogType {
+    INFO
+    WARN
+    DANGER
+}
+#atomic
+interface Node {
     uid: ID!
 }
-type ItemState {
-    name: String
+interface Log {
+    type: LogType!
+    message: String!
 }
-type TagState {
-    name: String
-    type: ColorType
-    message: String
+#service type
+type Item implements Node {
+    name: String!
 }
-type DocumentNode {
-    children: [IDocumentNode!]
-    uid: ID
-    name: String
+type Tag implements Log {
+    name: String!
 }
-type DocNode {
-    uid: ID
+type DocumentNode implements Node {
+    children: [DocumentNode!]!
+    name: String!
 }
 type Task {
-    current: DocNode
-    task: String
-    param: [Primitive!]
+    current: DocumentNode!
+    task: String!
+    param: [Primitive!]!
 }
 #mapping
 type Tasks {
-    items: [Task!]
+    items: [Task!]!
 }
 
 #RootType
 type Query {
-    Action: Action
-    Tasks: Tasks
     Property: Property
-    TagState: TagState
-    DocNode: DocNode
+    Tag: Tag
+    Window: DocumentNode
+    Tasks: Tasks
 }
+#

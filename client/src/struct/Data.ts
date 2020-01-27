@@ -1,5 +1,5 @@
-import * as Base from './Base';
-export type DelayTaskFunction<T> = (current: T) => Promise<void>;
+import { ColorType, Primitive } from './Base';
+export * from './Base'
 export enum TagEnum {
     SUCCESS = 0,
     WARN = -1,
@@ -9,13 +9,12 @@ export enum TagEnum {
 export interface IDocNode {
     children: IDocNode[];
 }
-
 export interface IItemState {
     name: string;
 }
 export interface ITagState {
     name: string;
-    type: Base.ColorType;
+    type: ColorType;
     message: string;
 }
 export interface IDocumentNode {
@@ -25,23 +24,8 @@ export interface IDocumentNode {
 }
 export interface IProperty {
 }
-
-
-export interface ITaskMethod<T> {
-    focus(): DelayTaskFunction<T>;
-    focusOut(): DelayTaskFunction<T>;
-    click(): DelayTaskFunction<T>;
-    doubleClick(): DelayTaskFunction<T>;
-    mouseEnter(isOver: boolean): DelayTaskFunction<T>;
-    mouseLeave(): DelayTaskFunction<T>;
-    resize(width: number, height: number): DelayTaskFunction<T>;
-    // zoom(ratio: number): Promise<IComponentEvent>
-    keyDown(keyCode: number): DelayTaskFunction<T>;
-    keyUp(keyCode: number): DelayTaskFunction<T>;
-    keyPress(keyCode: number): DelayTaskFunction<T>;
-}
 export interface ITask<T> {
     current: T,
     task: string,
-    param: Base.Primitive[] 
+    param: Primitive[] 
 }

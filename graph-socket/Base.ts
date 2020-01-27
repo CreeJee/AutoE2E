@@ -52,9 +52,8 @@ const schema =  graphql.buildSchema(typeDefs);
 //TODO : divied graphQL payload
 export class SocketRunner implements ISockEvent{
     async onMessage (socket:Sock, event: string, data: string): Promise<void> {
-        if(event === 'graphql') {
-            const result = await graphql.graphql(schema, data, resolvers);
-            socket.send(JSON.stringify(result));
-        }
+        // just hook, whatever
+        const result = await graphql.graphql(schema, data, resolvers);
+        socket.send(event, JSON.stringify(result));
     }
 }

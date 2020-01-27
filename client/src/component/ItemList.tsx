@@ -8,7 +8,7 @@ import React, { PropsWithChildren } from 'react';
 // tslint:disable-next-line: no-submodule-imports
 import 'antd/dist/antd.css';
 
-import { useAdapterState } from 'src/hooks/useAdapter';
+import { useGqlState } from 'src/hooks/useAdapter';
 import { IItemState } from '../struct/Data';
 
 export interface IThemeProps {
@@ -17,8 +17,8 @@ export interface IThemeProps {
     name: string;
 }
 
-const ItemList: React.FC<IThemeProps> = (props: PropsWithChildren<ITaskProps>) => {
-    const [taskList] = useAdapterState<IItemState[]>(props.name, []);
+const ItemList: React.FC<IThemeProps> = (props: PropsWithChildren<IThemeProps>) => {
+    const [taskList] = useGqlState<IItemState[]>(props.name, []);
     return (
         <Menu
             theme={props.theme || 'dark'}

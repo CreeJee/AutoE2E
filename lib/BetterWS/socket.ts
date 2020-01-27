@@ -8,7 +8,7 @@ export interface ISocket {
     readonly serverRequest: ServerRequest;
     readonly originalSock: WebSocket;
     init(): Promise<ISocket>;
-    send(data: SockMessage): Promise<void>
+    send(key:string, data: SockMessage): Promise<void>
     close(info: ICloseReason): Promise<void>;
     receive(): AsyncIterableIterator<SockEvent>
 }
@@ -35,8 +35,8 @@ export class Sock implements ISocket {
     get originalSock() {
         return this._sock;
     }
-    async send(data :SockMessage){
-        return this._sock.send(data);
+    async send(event:string, data :SockMessage){
+        return this._sock.send(`${event}:${data}`);
     }
     async close(info: ICloseReason) {
         this._sock.close(info.code, info.reason);
