@@ -12,18 +12,18 @@ const App: React.FC = () => {
     return (
         <Layout>
             <Header>
-                <ItemList theme="dark" name="Project" />
+                <ItemList theme="dark" name="Projects" />
             </Header>
             <Content style={{ padding: '50px' }}>
                 <Row gutter={[16, 32]}>
                     <Col span={4}>
                         <Card hoverable={true} title="Task List">
-                            <ItemList theme="light" mode="vertical" name="Task" />
+                            <ItemList theme="light" mode="vertical" name="Tasks" />
                         </Card>
                     </Col>
                     <Col span={4}>
                         <Card hoverable={true} title="Record">
-                            <ItemList theme="light" mode="vertical" name="Record" />
+                            <ItemList theme="light" mode="vertical" name="Records" />
                         </Card>
                     </Col>
 

@@ -6,7 +6,8 @@
     "scripts": {
         "develop": "deno --allow-read --allow-net ./Socket.ts",
         "client-develop": "cd ./client && npm run start",
-        "server": "cd ./client && npm run start && cd ../ && npm run client-develop"
+        "server": "cd ./client && npm run start && cd ../ && npm run client-develop",
+        "gql-codegen": "graphql-codegen --config gql-codegen.yml"
     },
     "author": "",
     "license": "ISC",
@@ -15,8 +16,23 @@
         "typescript": "^3.3.1"
     },
     "devDependencies": {
+        "@graphql-codegen/cli": "^1.12.1",
+        "@graphql-codegen/introspection": "^1.11.2",
+        "@graphql-codegen/typescript": "1.11.2",
+        "@graphql-codegen/typescript-graphql-files-modules": "1.11.2",
+        "@graphql-codegen/typescript-operations": "1.11.2",
+        "@graphql-codegen/typescript-resolvers": "1.11.2",
         "@types/graphql": "^14.5.0",
         "@types/node": "^13.5.0",
+        "@typescript-eslint/eslint-plugin": "^2.17.0",
+        "@typescript-eslint/parser": "^2.17.0",
+        "eslint": "^6.8.0",
+        "eslint-config-standard": "^14.1.0",
+        "eslint-plugin-graphql": "^3.1.1",
+        "eslint-plugin-import": "^2.20.0",
+        "eslint-plugin-node": "^11.0.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1",
         "graphql": "^14.5.8",
         "graphql-tools": "^4.0.6"
     }

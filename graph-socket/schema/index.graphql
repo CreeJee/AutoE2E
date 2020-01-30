@@ -1,0 +1,72 @@
+#lib
+# scalar Date
+
+enum Property {
+    width
+    height
+}
+enum TagEnum {
+    SUCCESS
+    WARN
+    TEST_ERROR
+    UNKNOWN_ERR
+}
+enum LogType {
+    INFO
+    WARN
+    DANGER
+}
+#atomic
+interface Node {
+    uid: ID!
+    name: String!
+}
+interface Log {
+    type: LogType!
+    message: String!
+}
+#service type
+type Item {
+    uid: ID!
+    name: String!
+}
+type Tag {
+    type: LogType!
+    message: String!
+}
+type DocumentNode {
+    uid: ID!
+    name: String!
+    children: [DocumentNode!]!
+}
+type Task {
+    uid: ID!
+    name: String!
+    current: DocumentNode!
+    param: [String!]!
+}
+#mapping
+type Project {
+    id: ID
+    tag: Tag
+    Window: DocumentNode
+    Tasks: [Task!]!
+}
+input TaskInput {
+    name: String!
+    nodeId: ID!
+    param: [String!]!
+}
+#RootType
+type Query {
+    Projects(user: ID): [Project!]!
+}
+type Mutation {
+    createProject(user: ID): Project
+    deleteProject(user: ID, projectID: ID): Boolean
+
+    addTask(projectID: ID, task: TaskInput): Task
+    removeTask(projectID: ID, taskID: ID): Boolean
+
+    runTask(projectID: ID, taskID: ID): Project
+}

@@ -1,0 +1,20 @@
+overwrite: true
+schema: "./graph-socket/schema/index.graphql"
+# documents: "./graph-socket/schema/index.graphql"
+generates:
+    graph-socket/generatedType/graphql.ts:
+        plugins:
+            - "typescript"
+            - "typescript-operations"
+            - "typescript-resolvers"
+            # - "typescript-graphql-files-modules"
+
+    client/src/struct/graphql.ts:
+        plugins:
+            - "typescript"
+            - "typescript-operations"
+            - "typescript-resolvers"
+            # - "typescript-graphql-files-modules"
+    graph-socket/generatedType/graphql.schema.json:
+        plugins:
+            - "introspection"

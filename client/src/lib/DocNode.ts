@@ -2,13 +2,20 @@ import { Primitive } from '../struct/Base';
 import { IDocumentNode, ITaskMethod, ITask, DelayTaskFunction } from '../struct/Data';
 import { AdapterHandler, IResponseType } from '../struct/Interface/SockAdapter';
 import { Instance as adapter} from './Socket';
-import { useAdapterState } from 'src/hooks/useAdapter';
+import { useGqlState, gqlDispatch } from 'src/hooks/useAdapter';
 export type ResponseNode = IResponseType<DocNode>;
 export type HandlerType = AdapterHandler<ResponseNode>;
 
-const EVENT_NAME = 'DocumentTree';
+const EVENT_NAME = 'Window';
+const GET_QUERY = `query {
+    
+}`;
+const SEND_OVERRIDE_QUERY = `mutation {
+
+}`;
 export function sendOverride<T>(task: string, ...param: Primitive[]): DelayTaskFunction<T> {
     return async (current: T) => {
+        gqlDispatch(EVENT_NAME,SEND_OVERRIDE_QUERY)
         return adapter.send<IResponseType<ITask<T>>>({key:EVENT_NAME, data: {current, task, param}});
     };
 }
@@ -25,7 +32,7 @@ export class DocNode implements IDocumentNode{
         // const result = Promise.all(tasks.map(v => v(this)));
     }
     static useState(){
-        return useAdapterState<DocNode>(EVENT_NAME, new DocNode(0));
+        return useGqlState<DocNode>(EVENT_NAME, GET_QUERY,new DocNode(0));
     }
     
     // public _load(obj: object) {}

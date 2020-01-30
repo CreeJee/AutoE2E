@@ -18,7 +18,12 @@ export interface IThemeProps {
 }
 
 const ItemList: React.FC<IThemeProps> = (props: PropsWithChildren<IThemeProps>) => {
-    const [taskList] = useGqlState<IItemState[]>(props.name, []);
+    const fieldName = props.name;
+    const query = `
+    query {
+        ${fieldName}
+    }`;
+    const [taskList] = useGqlState<IItemState[]>(fieldName, query, []);
     return (
         <Menu
             theme={props.theme || 'dark'}
