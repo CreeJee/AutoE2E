@@ -23,8 +23,8 @@ async function resolveModule (path: string) : Promise<moduleMockType> {
         )
     ).reduce(
         (accr, moduleObj: moduleMockType, nth) => {
-            const fileName = dirList[nth].name
-            const event = basename(fileName, extname(fileName))
+            // const fileName = dirList[nth].name
+            // const event = basename(fileName, extname(fileName))
             const moduleFn = moduleObj.default
             const moduleKeys = duplicatedKeys(accr, moduleFn)
             // accr[event] = moduleObj.default

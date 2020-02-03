@@ -16,57 +16,73 @@ enum LogType {
     WARN
     DANGER
 }
+enum TaskJob {
+    focus
+    focusOut
+    click
+    doubleClick
+    mouseEnter
+    mouseLeave
+    resize
+    zoom
+    keyDown
+    keyUp
+    keyPress
+}
 #atomic
 interface Node {
-    uid: ID!
-    name: String!
+    name: ID!
 }
 interface Log {
     type: LogType!
     message: String!
 }
+#todo extends all interface
 #service type
-type Item {
-    uid: ID!
-    name: String!
-}
-type Tag {
+type Tag implements Log {
     type: LogType!
     message: String!
 }
-type DocumentNode {
-    uid: ID!
-    name: String!
+type DocumentNode implements Node {
+    name: ID!
     children: [DocumentNode!]!
 }
 type Task {
-    uid: ID!
-    name: String!
-    current: DocumentNode!
+    name: TaskJob!
     param: [String!]!
+    current: DocumentNode!
 }
-#mapping
-type Project {
-    id: ID
-    tag: Tag
-    Window: DocumentNode
-    Tasks: [Task!]!
+type TaskGroup implements Node {
+    name: ID!
+    tasks: [Task!]!
 }
-input TaskInput {
-    name: String!
+type Project implements Node {
+    name: ID!
+    window: DocumentNode
+    tags: [Tag!]!
+    taskGroup: [TaskGroup!]!
+}
+
+input TaskInfo {
+    name: ID!
     nodeId: ID!
     param: [String!]!
 }
+
 #RootType
 type Query {
-    Projects(user: ID): [Project!]!
+    projects: [Project!]!
+    project(id: ID): Project
 }
 type Mutation {
-    createProject(user: ID): Project
-    deleteProject(user: ID, projectID: ID): Boolean
+    createProject(name: ID): Project
+    deleteProject(name: ID): Boolean
 
-    addTask(projectID: ID, task: TaskInput): Task
-    removeTask(projectID: ID, taskID: ID): Boolean
+    insertGroup(project: ID, group: ID): TaskGroup
+    removeGroup(project: ID, group: ID): Boolean
 
-    runTask(projectID: ID, taskID: ID): Project
+    insertTask(project: ID, group: ID, task: TaskInfo): Task
+    removeTask(project: ID, group: ID, nth: Int): Boolean
+
+    runTask(project: ID, group: ID): DocumentNode
 }

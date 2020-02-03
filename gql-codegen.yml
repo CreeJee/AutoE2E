@@ -1,20 +1,26 @@
 overwrite: true
-schema: "./graph-socket/schema/index.graphql"
+schema: './graph-socket/schema/index.graphql'
 # documents: "./graph-socket/schema/index.graphql"
 generates:
     graph-socket/generatedType/graphql.ts:
         plugins:
-            - "typescript"
-            - "typescript-operations"
-            - "typescript-resolvers"
-            # - "typescript-graphql-files-modules"
+            - 'typescript'
+            - 'typescript-operations'
+            - 'typescript-resolvers'
 
     client/src/struct/graphql.ts:
         plugins:
-            - "typescript"
-            - "typescript-operations"
-            - "typescript-resolvers"
-            # - "typescript-graphql-files-modules"
+            - 'typescript'
+            - 'typescript-operations'
+            - 'typescript-resolvers'
+    wrapper/Android/AutoE2E/app/src/main/java/com/example/autoe2e/lib/types/Scheme.kt:
+        plugins:
+            - 'kotlin'
+        config:
+            package: com.example.autoe2e.lib.types
+            skipTypename: false
+            nonOptionalTypename: false
+            listType: ArrayList
     graph-socket/generatedType/graphql.schema.json:
         plugins:
-            - "introspection"
+            - 'introspection'

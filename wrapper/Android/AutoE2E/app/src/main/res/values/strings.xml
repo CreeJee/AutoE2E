@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AutoE2E</string>
+    <string name="app_title">태스트 할 앱을 선택해 주세요</string>
+    <string name="app_select_response">앱이 선택되었습니다</string>
+    <string name="app_select_non_support">지원하는 앱이 없습니다.</string>
+    <string name="app_load_button">Choose!</string>
+
+
+    <string name="mine_type">binary/test-solution</string>
+    <string name="action_name">com.example.autoe2e.CHOOSE_APP</string>
+
+</resources>
