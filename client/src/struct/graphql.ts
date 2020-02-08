@@ -11,8 +11,9 @@ export type Scalars = {
 
 export type DocumentNode = Node & {
    __typename?: 'DocumentNode',
-  name: Scalars['ID'],
+  name: Scalars['String'],
   children: Array<DocumentNode>,
+  uid: Scalars['Int'],
 };
 
 export type Log = {
@@ -81,12 +82,12 @@ export type MutationRunTaskArgs = {
 
 /** atomic */
 export type Node = {
-  name: Scalars['ID'],
+  name: Scalars['String'],
 };
 
 export type Project = Node & {
    __typename?: 'Project',
-  name: Scalars['ID'],
+  name: Scalars['String'],
   window?: Maybe<DocumentNode>,
   tags: Array<Tag>,
   taskGroup: Array<TaskGroup>,
@@ -129,6 +130,7 @@ export enum TagEnum {
 
 export type Task = {
    __typename?: 'Task',
+  index?: Maybe<Scalars['Int']>,
   name: TaskJob,
   param: Array<Scalars['String']>,
   current: DocumentNode,
@@ -136,13 +138,13 @@ export type Task = {
 
 export type TaskGroup = Node & {
    __typename?: 'TaskGroup',
-  name: Scalars['ID'],
+  name: Scalars['String'],
   tasks: Array<Task>,
 };
 
 export type TaskInfo = {
-  name: Scalars['ID'],
-  nodeId: Scalars['ID'],
+  name: TaskJob,
+  nodeUid: Scalars['Int'],
   param: Array<Scalars['String']>,
 };
 
@@ -235,19 +237,19 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
   Project: ResolverTypeWrapper<Project>,
   Node: ResolverTypeWrapper<Node>,
-  ID: ResolverTypeWrapper<Scalars['ID']>,
+  String: ResolverTypeWrapper<Scalars['String']>,
   DocumentNode: ResolverTypeWrapper<DocumentNode>,
+  Int: ResolverTypeWrapper<Scalars['Int']>,
   Tag: ResolverTypeWrapper<Tag>,
   Log: ResolverTypeWrapper<Log>,
   LogType: LogType,
-  String: ResolverTypeWrapper<Scalars['String']>,
   TaskGroup: ResolverTypeWrapper<TaskGroup>,
   Task: ResolverTypeWrapper<Task>,
   TaskJob: TaskJob,
+  ID: ResolverTypeWrapper<Scalars['ID']>,
   Mutation: ResolverTypeWrapper<{}>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   TaskInfo: TaskInfo,
-  Int: ResolverTypeWrapper<Scalars['Int']>,
   Property: Property,
   TagEnum: TagEnum,
 };
@@ -257,26 +259,27 @@ export type ResolversParentTypes = {
   Query: {},
   Project: Project,
   Node: Node,
-  ID: Scalars['ID'],
+  String: Scalars['String'],
   DocumentNode: DocumentNode,
+  Int: Scalars['Int'],
   Tag: Tag,
   Log: Log,
   LogType: LogType,
-  String: Scalars['String'],
   TaskGroup: TaskGroup,
   Task: Task,
   TaskJob: TaskJob,
+  ID: Scalars['ID'],
   Mutation: {},
   Boolean: Scalars['Boolean'],
   TaskInfo: TaskInfo,
-  Int: Scalars['Int'],
   Property: Property,
   TagEnum: TagEnum,
 };
 
 export type DocumentNodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['DocumentNode'] = ResolversParentTypes['DocumentNode']> = {
-  name?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   children?: Resolver<Array<ResolversTypes['DocumentNode']>, ParentType, ContextType>,
+  uid?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
 };
 
 export type LogResolvers<ContextType = any, ParentType extends ResolversParentTypes['Log'] = ResolversParentTypes['Log']> = {
@@ -297,11 +300,11 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type NodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
   __resolveType: TypeResolveFn<'Project' | 'DocumentNode' | 'TaskGroup', ParentType, ContextType>,
-  name?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
 };
 
 export type ProjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Project'] = ResolversParentTypes['Project']> = {
-  name?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   window?: Resolver<Maybe<ResolversTypes['DocumentNode']>, ParentType, ContextType>,
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>,
   taskGroup?: Resolver<Array<ResolversTypes['TaskGroup']>, ParentType, ContextType>,
@@ -318,13 +321,14 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
 };
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
+  index?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   name?: Resolver<ResolversTypes['TaskJob'], ParentType, ContextType>,
   param?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>,
   current?: Resolver<ResolversTypes['DocumentNode'], ParentType, ContextType>,
 };
 
 export type TaskGroupResolvers<ContextType = any, ParentType extends ResolversParentTypes['TaskGroup'] = ResolversParentTypes['TaskGroup']> = {
-  name?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>,
 };
 

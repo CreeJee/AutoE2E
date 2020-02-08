@@ -12,15 +12,15 @@ private val projectList = HashMap<String,Project>();
 fun createProject(name: String) : Project{
     val temp = Project(
         name = name,
-        window = DocumentNode("window", ArrayList()),
-        taskGroup = ArrayList(),
+        window = DocumentNode("window", ArrayList(), 0),
+        taskGroup = HashMap(),
         tags = ArrayList()
     )
     projectList[name] = temp
     return temp
 }
 fun removeProject(name: String): Boolean {
-    val hasName = projectList.get(name) === null
+    val hasName = projectList[name] === null
     if (hasName) {
         projectList.remove(name);
     }
@@ -30,5 +30,5 @@ fun projectList(): HashMap<String, Project>{
     return projectList;
 }
 fun findProject (uid: String): Project? {
-    return projectList[uid];
+    return projectList[uid]
 }

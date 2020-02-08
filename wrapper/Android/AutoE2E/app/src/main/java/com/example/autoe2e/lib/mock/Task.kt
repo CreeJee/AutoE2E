@@ -1,38 +1,35 @@
 package com.example.autoe2e.lib.mock
 
-import com.example.autoe2e.lib.types.Project
-import com.example.autoe2e.lib.types.Task
-import com.example.autoe2e.lib.types.TaskInfoInput
+import com.example.autoe2e.lib.types.*
 import com.fasterxml.jackson.core.io.NumberInput
+import graphql.schema.AsyncDataFetcher.async
 import io.netty.util.concurrent.Promise
+import kotlinx.coroutines.future.await
 import java.util.ArrayList
+import java.util.concurrent.CompletableFuture
 
-fun createTask(projectID: String, task: TaskInfoInput): Task? {
-    val project = findProject(projectID);
-    if (project === null) {
-        return null;
+fun insertTask(projectName: String, groupName: String, task: TaskInfoInput): Task? {
+    val project: Project? = findProject(projectName);
+    val group: TaskGroup? = findProjectGroup(projectName, groupName);
+    val foundNode: DocumentNode? = findNode(project?.window, task.nodeUid);
+    if (project !is Project || group !is TaskGroup || foundNode !is DocumentNode) {
+        return null
     }
     val temp = Task(
-        uid = project.tasks.size.toString(),
+        index = group.tasks.size - 1,
         name = task.name,
-        current = findNode(task.nodeId),
+        current = foundNode,
         param = task.param
     );
-    project.tasks.add(temp);
-    return temp;
+    group.tasks.add(temp)
+    return temp
 }
-fun removeTask(projectId: String, taskId: String) : Boolean{
-    val project = findProject(projectId);
-    if (project !== null) {
-        project.tags.removeAt(NumberInput.parseInt(taskId))
+fun removeTask(projectName: String, groupName: String, nth: Int) : Boolean{
+    val group: TaskGroup? = findProjectGroup(projectName, groupName);
+    if (group is TaskGroup && group.tasks.size > nth) {
+        //project.tags.removeAt(NumberInput.parseInt(taskId))
+        group.tasks.removeAt(nth)
         return true
     }
     return false
-}
-fun runTask(projectId= projectID): Promise<Unit> {
-    val project = findProject(projectId);
-    for(task in tasks) {
-        // task.name.label
-        // invokeTask
-    }
 }

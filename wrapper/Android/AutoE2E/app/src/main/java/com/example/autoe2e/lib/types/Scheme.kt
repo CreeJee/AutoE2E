@@ -83,8 +83,8 @@ enum class TagEnum(val label: String) {
 
 
 data class TaskInfoInput(
-    val name: String,
-    val nodeId: String,
+    val name: TaskJob,
+    val nodeUid: Int,
     val param: ArrayList<String>
 )
 

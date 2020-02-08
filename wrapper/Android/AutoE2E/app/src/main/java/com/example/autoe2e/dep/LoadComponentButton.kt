@@ -2,6 +2,7 @@ package com.example.autoe2e.dep
 
 import android.content.Context
 import android.content.Intent
+import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -9,15 +10,17 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import com.example.autoe2e.R
+var currentContext: Context? = null;
+class LoadComponentButton : Button {
 
-class LoadComponentButton : Button{
     private fun onClick(view: View) {
         Log.d("tag","loadComponent Click");
         val intent = Intent();
         intent.action = context.getString(R.string.action_name);
         intent.type = context.getString(R.string.mine_type);
         if(intent.resolveActivity(context.packageManager) !== null) {
-            startActivity(context, intent, null);
+            startActivity(context, intent, null)
+            currentContext = context;
         } else {
             Toast.makeText(context, context.getString(R.string.app_select_non_support),1000).show()
         }

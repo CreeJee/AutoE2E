@@ -31,7 +31,7 @@ enum TaskJob {
 }
 #atomic
 interface Node {
-    name: ID!
+    name: String!
 }
 interface Log {
     type: LogType!
@@ -44,28 +44,30 @@ type Tag implements Log {
     message: String!
 }
 type DocumentNode implements Node {
-    name: ID!
+    name: String!
     children: [DocumentNode!]!
+    uid: Int!
 }
 type Task {
+    index: Int
     name: TaskJob!
     param: [String!]!
     current: DocumentNode!
 }
 type TaskGroup implements Node {
-    name: ID!
+    name: String!
     tasks: [Task!]!
 }
 type Project implements Node {
-    name: ID!
+    name: String!
     window: DocumentNode
     tags: [Tag!]!
     taskGroup: [TaskGroup!]!
 }
 
 input TaskInfo {
-    name: ID!
-    nodeId: ID!
+    name: TaskJob!
+    nodeUid: Int!
     param: [String!]!
 }
 
