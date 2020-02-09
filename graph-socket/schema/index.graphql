@@ -45,6 +45,7 @@ type Tag implements Log {
 }
 type DocumentNode implements Node {
     name: String!
+    parent: DocumentNode
     children: [DocumentNode!]!
     uid: Int!
 }

@@ -44,7 +44,7 @@ class GQLApplication  {
                     incoming.consumeEach {
                         frame ->  when {
                             frame is Frame.Text -> {
-                                outgoing.send(socket.parse(frame) as Frame)
+                                outgoing.send(Frame.Text(socket.parse(frame)))
                             }
                         }
                     }

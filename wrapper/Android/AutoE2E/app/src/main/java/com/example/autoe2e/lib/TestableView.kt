@@ -13,10 +13,8 @@ fun onDrag (view: View, event: DragEvent): Boolean {
 fun onKeydown (view: View, keyCode: Int, event: KeyEvent): Boolean {
     return true
 }
-class TestableView<T : View>{
-    var view: View;
-    constructor(view: View) {
-        this.view = view
+class TestableView<T : View>(var view: View) {
+    init {
         this.view.setOnClickListener(::onClick)
         this.view.setOnKeyListener(::onKeydown)
         this.view.setOnDragListener(::onDrag)

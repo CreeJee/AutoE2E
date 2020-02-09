@@ -10,7 +10,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import com.example.autoe2e.R
-var currentContext: Context? = null;
 class LoadComponentButton : Button {
 
     private fun onClick(view: View) {

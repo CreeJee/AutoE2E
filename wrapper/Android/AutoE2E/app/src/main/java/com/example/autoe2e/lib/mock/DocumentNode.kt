@@ -6,10 +6,14 @@ fun findNode(node: DocumentNode?, nodeUid: Int): DocumentNode? {
     //tree search
     //window.children
     if (node is DocumentNode) {
+
+        if (node.uid == nodeUid) {
+            return node
+        }
         for (child in node.children) {
-            return when (child.uid == nodeUid) {
-                true -> node
-                false -> findNode(node, nodeUid)
+            val found = findNode(child, nodeUid)
+            if (found !== null) {
+                return found
             }
         }
     }

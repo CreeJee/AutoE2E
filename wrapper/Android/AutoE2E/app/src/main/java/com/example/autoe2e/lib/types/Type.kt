@@ -1,49 +1,40 @@
 package com.example.autoe2e.lib.types
 
-import io.ktor.util.Hash
-import java.util.*
-import java.util.concurrent.CompletableFuture
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-//#RootType
-
-//    uid: ID!
-//    name: String!
 interface Node {
-    val name: String
+    var name: String
 }
 interface Log {
-    val type: LogType
-    val message: String
+    var type: LogType
+    var message: String
 }
-data class Item(
-    override val name: String
-) : Node
 
 data class Tag(
-    override val type: LogType,
-    override val message: String
+    override var type: LogType,
+    override var message: String
 ): Log
 data class DocumentNode(
-    override val name: String,
-    val children: ArrayList<DocumentNode>,
-    val uid: Int
+    override var name: String,
+    var children: ArrayList<DocumentNode>,
+    var parent: DocumentNode? = null,
+    var uid: Int
 ): Node
 data class Task (
-    val index: Int,
-    val name: TaskJob,
-    val current: DocumentNode,
-    val param: ArrayList<String>
+    var index: Int,
+    var name: TaskJob,
+    var current: DocumentNode,
+    var param: ArrayList<String>
 )
 data class TaskGroup(
-    override val name: String,
-    val tasks: ArrayList<Task>
+    override var name: String,
+    var tasks: ArrayList<Task>
 ): Node
 data class Project(
-    override val name: String,
-    val window: DocumentNode,
-    val tags: ArrayList<Tag>,
-    val taskGroup: HashMap<String, TaskGroup>
+    override var name: String,
+    var window: DocumentNode,
+    var tags: ArrayList<Tag>,
+    var taskGroup: HashMap<String, TaskGroup>
 ): Node
 
 interface IQuery {

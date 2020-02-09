@@ -17,23 +17,22 @@ import kotlinx.coroutines.channels.SendChannel
 
 
 val gson = Gson()
-class GQLSocket {
+class GQLSocket() {
     val runtime: GraphQL;
-    constructor() {
+
+    init {
         val config = SchemaGeneratorConfig(supportedPackages  = listOf("com.example"))
         val queries = listOf(TopLevelObject(Query()))
         val mutations = listOf(TopLevelObject(Mutation()))
         val schema: GraphQLSchema = toSchema(config = config, queries = queries, mutations = mutations)
-        this.runtime = GraphQL.newGraphQL(schema).build();
+        this.runtime = GraphQL.newGraphQL(schema).build()
     }
     fun parse(query : Frame.Text): String{
-        var response: String;
-        try {
-            val result: Map<String, kotlin.Any> = runtime.execute(query.toString()).getData();
-            response = gson.toJson(result)
-        }
-        catch (e: GraphQLException) {
-            response = gson.toJson(e.localizedMessage);
+        val response: String = try {
+            val result: Map<String, Any> = runtime.execute(query.toString()).getData();
+            gson.toJson(result)
+        } catch (e: GraphQLException) {
+            gson.toJson(e.localizedMessage);
         }
         Log.d("GQL-AUTOE2E",response)
         return response;

@@ -1,5 +1,8 @@
 package com.example.autoe2e.lib.mock
 
+import android.app.Activity
+import android.text.Layout
+import com.example.autoe2e.dep.LayoutEffects
 import com.example.autoe2e.dep.LoadComponentButton
 import com.example.autoe2e.dep.currentContext
 import com.example.autoe2e.lib.types.DocumentNode
@@ -40,20 +43,12 @@ fun removeProjectGroup(projectName: String, groupName: String): Boolean {
     // when duplicated
     return false
 }
-private suspend fun taskInit(root: DocumentNode) : CompletableFuture<Unit> {
-
-}
-private suspend fun taskSideEffects(root: DocumentNode, task: Task): CompletableFuture<Unit> {
-    currentContext.applicationContext
-}
 suspend fun runTask(projectName: String, groupName: String): DocumentNode?{
-    val project: Project? = findProject(projectName);
-    val group: TaskGroup? = findProjectGroup(projectName, groupName);
+    val project: Project? = findProject(projectName)
+    val group: TaskGroup? = findProjectGroup(projectName, groupName)
     if (project is Project && group is TaskGroup) {
-        taskInit(project.window).await()
-        for (task in group.tasks) {
-            taskSideEffects(project.window, task).await()
-        }
+        val layout = LayoutEffects(root = project.window)
+        layout.applyEffects(group)
         return project.window;
     }
     return null
